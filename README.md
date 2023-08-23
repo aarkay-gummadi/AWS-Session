@@ -9,14 +9,15 @@ Deploying a Node Js application on AWS EC2
 git clone hppts://github.com/aarkay.gummadi/AWS-Session
 ```
 * Setup the following environment variables - `.env` file
+  [Refer Here](https://github.com/aarkay-gummadi/AWS-Session/commit/d6c8613a6621b7bbe959eb739350fc61b7d437dd) for the `.env` file
 ```
-DOMAIN="http://localhost:3000"
+DOMAIN=""
 PORT=3000
-STATIC_DIR="./client"
+STATIC_DIR=""
 
 # Stripe API Keys
-PUBLISHABLE_KEY="pk_test_51NiJ6FSA6N7CZ2A3cWSuk3SeeIbzQDo6hC8vy6hBrRYSt7MkNfomfpEqIG3RBImCZo7W1unFc6x4zb2YrqUhK8tU00lZJYXGq1"
-SECRET_KEY="sk_test_51NiJ6FSA6N7CZ2A36fsnNGz2tGhvmsHGUoYSmoS1dwxQ3zAX43OtvyNjsPVGpAdKTWxCXKH7xFUhfeoLJbeUuETG00yKbyVDS5"
+PUBLISHABLE_KEY=""
+SECRET_KEY=""
 ```
 * How we will get the above Stripe API Keys 
   ![Preview](Images/nodejs1.png)
@@ -26,5 +27,9 @@ SECRET_KEY="sk_test_51NiJ6FSA6N7CZ2A36fsnNGz2tGhvmsHGUoYSmoS1dwxQ3zAX43OtvyNjsPV
 npm install
 npm run start
 ```
+![Preview](Images/nodejs2.png)
+![Preview](Images/nodejs3.png)
+
 
 ### Setup an AWS EC2 Instance
+

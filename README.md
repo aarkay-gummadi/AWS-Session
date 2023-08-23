@@ -78,6 +78,7 @@ vi .env
 ls -a
 ```
 ![Preview](Images/nodejs16.png)
+![Preview](Images/nodejs20.png)
 
 * Run the following commands
 ```

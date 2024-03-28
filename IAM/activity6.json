@@ -1,0 +1,18 @@
+{
+    "Version": "2012-10-17"
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": ["ec2:*", "cloudwatch:Describe*", "elasticloadbalancing:Describe*"],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Deny",
+            "Action": ["ec2:TerminateInstances"],
+            "Resource": "*",
+            "Condition": {
+                "StringNOtEquals": {"ec2:InstancesType": "t2.micro"}
+            }
+        }
+    ]     
+}

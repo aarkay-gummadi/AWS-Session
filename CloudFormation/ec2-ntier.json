@@ -1,0 +1,126 @@
+{
+    "awstemplateformatversion": "2010-09-09",
+    "description": "this is ntier in aws",
+    "parameters": {
+        "vpccidr": {
+            "type": "string",
+            "default": "192.168.0.0/16",
+            "description": "vpc cidrblock"
+        },
+        "ec2cidr": {
+            "description": "web1 subnet cidr",
+            "type": "string",
+            "default": "192.168.0.0/24"
+        },        
+        "az": {
+            "description": "this is az",
+            "type": "aws::ec2::availabilityzone::name"
+        },
+        "keypair": {
+            "description": "keypair",
+            "type": "aws::ec2::keypair::keyname"
+        },
+        "imageid": {
+            "description": "ami id",
+            "type": "string",
+            "default": "ami-0fcf52bcf5db7b003"
+        },
+        "sg": {
+
+        },
+        "instancetype": {
+            "description": "instance type",
+            "type": "string",
+            "default": "t2.micro",
+            "allowedvalues": [
+                "t2.micro",
+                "t3.micro"
+            ]
+        }
+    },
+    "resources": {
+        "ec2vpc": {
+            "type": "aws::ec2::vpc",
+            "properties": {
+                "cidrblock": {
+                    "ref": "vpccidr"
+                },
+                "enablednshostnames": true,
+                "tags": [
+                    {
+                        "key": "name",
+                        "value": "ec2vpc"
+                    },
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "ec2subnet": {
+            "type": "aws::ec2::subnet",
+            "properties": {
+                "vpcid": {
+                    "ref": "ec2vpc"
+                },
+                "availabilityzone": {
+                    "ref": "az"
+                },
+                "cidrblock": {
+                    "ref": "ec2cidr"
+                },
+                "tags": [
+                    {
+                        "key": "name",
+                        "value": "ec2"
+                    },
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "sg": {
+            "type": "aws::ec2::securitygroup",
+            "properties": {
+                "groupdescription": "this is web sg",
+                "securitygroupingress": [
+                    {
+                        "cidrip": "0.0.0.0/0",
+                        "description": "allow all incoming connections on 80",
+                        "ipprotocol": "tcp",
+                        "fromport": 80,
+                        "toport": 80
+                    }
+                ],
+                "vpcid": {
+                    "ref": "ec2vpc"
+                },
+                "tags": [
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    },
+                    {
+                        "key": "name",
+                        "value": "sg"
+                    }
+                ]
+            }
+        }
+    }
+}

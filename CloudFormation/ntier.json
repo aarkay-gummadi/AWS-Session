@@ -1,0 +1,374 @@
+{
+    "awstemplateformatversion": "2010-09-09",
+    "description": "this is ntier in aws",
+    "parameters": {
+        "vpccidr": {
+            "type": "string",
+            "default": "192.168.0.0/16",
+            "description": "vpc cidrblock"
+        },
+        "web1cidr": {
+            "description": "web1 subnet cidr",
+            "type": "string",
+            "default": "192.168.0.0/24"
+        },
+        "web2cidr": {
+            "description": "web2 subnet cidr",
+            "type": "string",
+            "default": "192.168.1.0/24"
+        },
+        "db1cidr": {
+            "description": "db1 subnet cidr",
+            "type": "string",
+            "default": "192.168.2.0/24"
+        },
+        "db2cidr": {
+            "description": "db2 subnet cidr",
+            "type": "string",
+            "default": "192.168.3.0/24"
+        },
+        "az1": {
+            "description": "this is az1",
+            "type": "aws::ec2::availabilityzone::name"
+        },
+        "az2": {
+            "description": "this is az2",
+            "type": "aws::ec2::availabilityzone::name"
+        },
+        "engine": {
+            "description": "database engine type",
+            "type": "string",
+            "default": "mysql",
+            "allowedvalues": [
+                "mysql",
+                "postgres"
+            ]
+        },
+        "keypair": {
+            "description": "keypair",
+            "type": "aws::ec2::keypair::keyname"
+        },
+        "imageid": {
+            "description": "ami id",
+            "type": "string",
+            "default": "ami-0b584e5449fa1dd56"
+        },
+        "instancetype": {
+            "description": "instance type",
+            "type": "string",
+            "default": "t2.micro",
+            "allowedvalues": [
+                "t2.micro",
+                "t3.micro"
+            ]
+        }
+    },
+    "resources": {
+        "ntiervpc": {
+            "type": "aws::ec2::vpc",
+            "properties": {
+                "cidrblock": {
+                    "ref": "vpccidr"
+                },
+                "enablednshostnames": true,
+                "tags": [
+                    {
+                        "key": "name",
+                        "value": "ntiervpc"
+                    },
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "web1subnet": {
+            "type": "aws::ec2::subnet",
+            "properties": {
+                "vpcid": {
+                    "ref": "ntiervpc"
+                },
+                "availabilityzone": {
+                    "ref": "az1"
+                },
+                "cidrblock": {
+                    "ref": "web1cidr"
+                },
+                "tags": [
+                    {
+                        "key": "name",
+                        "value": "web1"
+                    },
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "web2subnet": {
+            "type": "aws::ec2::subnet",
+            "properties": {
+                "vpcid": {
+                    "ref": "ntiervpc"
+                },
+                "availabilityzone": {
+                    "ref": "az2"
+                },
+                "cidrblock": {
+                    "ref": "web2cidr"
+                },
+                "tags": [
+                    {
+                        "key": "name",
+                        "value": "web2"
+                    },
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "db1subnet": {
+            "type": "aws::ec2::subnet",
+            "properties": {
+                "vpcid": {
+                    "ref": "ntiervpc"
+                },
+                "availabilityzone": {
+                    "ref": "az1"
+                },
+                "cidrblock": {
+                    "ref": "db1cidr"
+                },
+                "tags": [
+                    {
+                        "key": "name",
+                        "value": "db1"
+                    },
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "db2subnet": {
+            "type": "aws::ec2::subnet",
+            "properties": {
+                "vpcid": {
+                    "ref": "ntiervpc"
+                },
+                "availabilityzone": {
+                    "ref": "az2"
+                },
+                "cidrblock": {
+                    "ref": "db2cidr"
+                },
+                "tags": [
+                    {
+                        "key": "name",
+                        "value": "db2"
+                    },
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "rdsdbsubnetgroup": {
+            "type": "aws::rds::dbsubnetgroup",
+            "properties": {
+                "dbsubnetgroupdescription": "ntierdbsubnetgroup",
+                "dbsubnetgroupname": "ntierdbsubnetgroup",
+                "subnetids": [
+                    {
+                        "ref": "db1subnet"
+                    },
+                    {
+                        "ref": "db2subnet"
+                    }
+                ],
+                "tags": [
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "ntierdbsg": {
+            "type": "aws::ec2::securitygroup",
+            "properties": {
+                "groupdescription": "ntierdb security group",
+                "securitygroupingress": [
+                    {
+                        "cidrip": {
+                            "ref": "vpccidr"
+                        },
+                        "description": "allow all incoming connections on 3306",
+                        "ipprotocol": "tcp",
+                        "fromport": 3306,
+                        "toport": 3306
+                    }
+                ],
+                "vpcid": {
+                    "ref": "ntiervpc"
+                },
+                "tags": [
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ]
+            }
+        },
+        "ntierdb": {
+            "type": "aws::rds::dbinstance",
+            "properties": {
+                "allocatedstorage": 20,
+                "dbinstanceclass": "db.t3.micro",
+                "allowmajorversionupgrade": false,
+                "autominorversionupgrade": false,
+                "backupretentionperiod": 0,
+                "dbinstanceidentifier": "qtrdsdbinstancefromcf",
+                "dbname": "employees",
+                "dbsubnetgroupname": {
+                    "ref": "rdsdbsubnetgroup"
+                },
+                "engine": {
+                    "ref": "engine"
+                },
+                "engineversion": "8.0.32",
+                "masterusername": "admin",
+                "masteruserpassword": "adminadmin",
+                "multiaz": false,
+                "port": "3306",
+                "publiclyaccessible": false,
+                "storagetype": "gp2",
+                "tags": [
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    }
+                ],
+                "vpcsecuritygroups": [
+                    {
+                        "ref": "ntierdbsg"
+                    }
+                ]
+            }
+        },
+        "websg": {
+            "type": "aws::ec2::securitygroup",
+            "properties": {
+                "groupdescription": "this is web sg",
+                "securitygroupingress": [
+                    {
+                        "cidrip": "0.0.0.0/0",
+                        "description": "allow all incoming connections on 80",
+                        "ipprotocol": "tcp",
+                        "fromport": 80,
+                        "toport": 80
+                    },
+                    {
+                        "cidrip": "0.0.0.0/0",
+                        "description": "allow all incoming connections on 22",
+                        "ipprotocol": "tcp",
+                        "fromport": 22,
+                        "toport": 22
+                    }
+                ],
+                "vpcid": {
+                    "ref": "ntiervpc"
+                },
+                "tags": [
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    },
+                    {
+                        "key": "name",
+                        "value": "websg"
+                    }
+                ]
+            }
+        },
+        "webec2": {
+            "type": "aws::ec2::instance",
+            "properties": {
+                "keyname": {
+                    "ref": "keypair"
+                },
+                "imageid": {
+                    "ref": "imageid"
+                },
+                "instancetype": {
+                    "ref": "instancetype"
+                },
+                "monitoring": false,
+                "securitygroupids": [
+                    {
+                        "ref": "websg"
+                    }
+                ],
+                "subnetid": {
+                    "ref": "web1subnet"
+                },
+                "tags": [
+                    {
+                        "key": "env",
+                        "value": "dev"
+                    },
+                    {
+                        "key": "createdby",
+                        "value": "cloudformation"
+                    },
+                    {
+                        "key": "name",
+                        "value": "websg"
+                    }
+                ]
+            }
+        }
+    }
+}
